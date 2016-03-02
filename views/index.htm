@@ -3,47 +3,47 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Rescue Time Report</title>
-        
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>        
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>  
-          
-		<style type="text/css"> 
-            ${demo.css}            
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+		<style type="text/css">
+            ${demo.css}
             #div-filter {
                 width:40%;
-                border-bottom: 1px solid #AAA; 
+                border-bottom: 1px solid #AAA;
             }
             #tbl-filter td {
                 padding: 5px;
                 min-width: 70px;
-            }            
-            .responsive-table { 
-                width: 80%; 
+            }
+            .responsive-table {
+                width: 80%;
                 border-collapse: collapse;
-                margin: 0 auto; 
+                margin: 0 auto;
             }
             /* Zebra striping */
-            .responsive-table tr:nth-of-type(odd) { 
-                background: #eee; 
+            .responsive-table tr:nth-of-type(odd) {
+                background: #eee;
             }
-            .responsive-table th { 
-                background: #333; 
-                color: white; 
-                font-weight: bold; 
+            .responsive-table th {
+                background: #333;
+                color: white;
+                font-weight: bold;
             }
-            .responsive-table td, th { 
-                padding: 6px; 
-                border: 1px solid #ccc; 
-                text-align: left; 
+            .responsive-table td, th {
+                padding: 6px;
+                border: 1px solid #ccc;
+                text-align: left;
             }
 		</style>
-        
+
 		<script type="text/javascript">
             $(document).ready(function () {
                 var now = new Date();
                 var dateFormat = 'yy-mm-dd';
-                                
+
                 $( "#restrict_begin" ).datepicker({
                     dateFormat:dateFormat,
                     defaultDate:now,
@@ -60,25 +60,25 @@
                         $( "#restrict_begin" ).datepicker( "option", "maxDate", selectedDate );
                     }
                 });
-                
+
                 //init chart
                 init();
             });
-            
+
             function init(){
                 productivity_chart();
                 activity_table();
             }
-            
+
             function productivity_chart(){
                 var key = $("#person option:selected").val();
                 var restrict_begin = $("#restrict_begin").val();
                 var restrict_end = $("#restrict_end").val();
-                 
+
                 $.ajax({
                     url:'/rt_data',
                     data : {
-                            key : key,                            
+                            key : key,
                             restrict_begin : restrict_begin,
                             restrict_end : restrict_end,
                             restrict_kind : 'productivity'
@@ -89,12 +89,12 @@
                     }
                 });
             }
-            
+
             function draw_productivity_chart(data){
                 var datas = new Array();
                 var totalTime = 0;
                 var rows = data.rows
-                
+
                 for(var i in rows){
                     var name = "";
                     if(rows[i][0] == 1){
@@ -108,13 +108,13 @@
                     }else if(rows[i][0] == 5){
                         name = "Distracting";
                     }
-                    
-                    var time = rows[i][1];                             
-                    datas.push({name:name, y:time});                            
+
+                    var time = rows[i][1];
+                    datas.push({name:name, y:time});
                     totalTime += time;
                 }
-                        
-                // Create the chart               
+
+                // Create the chart
 				$('#container').highcharts({
                     chart: {type: 'column'},
                     title: {text: 'Productivity'},
@@ -139,7 +139,7 @@
                             var numhours = Math.floor(seconds / 3600);
                             var numminutes = Math.floor((seconds % 3600) / 60);
                             var string = numhours + " hours " + numminutes + " minutes ";
-                            
+
                             return '<span style="color:{point.color}"><b>'+ string + '</b><br/>';
                         }
                     },
@@ -148,18 +148,18 @@
                         colorByPoint: true,
                         data: datas
                     }]
-                });                
+                });
             }
-            
+
             function activity_table(){
                 var key = $("#person option:selected").val();
                 var restrict_begin = $("#restrict_begin").val();
                 var restrict_end = $("#restrict_end").val();
-                 
+
                 $.ajax({
                     url:'/rt_data',
                     data : {
-                            key : key,                            
+                            key : key,
                             restrict_begin : restrict_begin,
                             restrict_end : restrict_end,
                             restrict_kind : 'activity'
@@ -167,9 +167,9 @@
                     dataType : "json",
                     success : function(data){
                         $("#act-body").html("");
-                        
+
                         var rows = data.rows;
-                        for(var i in rows){                            
+                        for(var i in rows){
                             $("#act-body").append(
                                 "<tr>" +
                                 "<td>"+seconds_to_string(rows[i][1])+"</td>" +
@@ -181,25 +181,31 @@
                     }
                 });
             }
-            
+
             function seconds_to_string(seconds){
                 var numhours = Math.floor(seconds / 3600);
-                var numminutes = Math.floor((seconds % 3600) / 60);                
+                var numminutes = Math.floor((seconds % 3600) / 60);
                 return (numhours > 0 ? numhours + " hours " : "") + (numminutes > 0 ?numminutes + " minutes " : "");
             }
 		</script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
 	</head>
 	<body>
-        <div id="div-filter">            
+        <div id="div-filter">
             <table id="tbl-filter">
                 <tr>
                     <td>Name</td>
-                    <td colspan="2"> 
+                    <td colspan="2">
                         <select name="person" id="person">
                             <option value="B63YS_f6OiMyG6V4fFgF7TUjkbyewTGaw3rBgQ5_">Nanda Nandya Putra</option>
                             <option value="B63CX0sPwRh2PVeNWrBiWZ7_6I982HdmBBMpZb9j">Rayhan Firdaus</option>
                             <option value="B636jGAwOH67x2RWd8CwKiVDurTXSDEKUsJyRjAo">Bayu Hendra Winata</option>                            
+							<option value="B63LZd3NZXPNRPKIWez7uvOMeZ7YgRIyVfSIahXv">Lambang Prabawa</option>
+                            <option value="B63e_KwY6zyAQtOZoBuSnYqZ7qECBvxJQiruBY8X">Nurrohman</option>
+                            <option value="B63RWdCOjkgUIX0W5rVCxsn3IkJ1lIgtKt_qoXcC">Yoga Hanggara</option>
+                            <option value="B63OWwz1pUm0JwAe6jJslQp8lF40aMQiIlNJT5JB">Tama</option>
+							<option value="B63fvvuCdH56ObFDjxlB6kRKHVh6ZRoWCFO8uiMa">Aldy Ginanjar</option>
+                            <option value="B63x70TcgZVi9oOLXkMiL0KBI5Oo0Aaz7ZLLhbCs">Ramadani</option>
                         </select>
                     </td>
                 </tr>
@@ -219,13 +225,13 @@
                 </tr>
             </table>
         </div>
-        
+
         <br/>
-        
+
         <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto;"></div>
-        
+
         <br/>
-        
+
         <table class="responsive-table">
             <thead>
                 <tr>
@@ -235,7 +241,7 @@
                 </tr>
             </thead>
             <tbody id="act-body">
-                
+
             </tbody>
         </table>
 	</body>
