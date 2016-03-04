@@ -37,8 +37,6 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                     }
                 };
 
-                $scope.people;
-                
                 $scope.labels = ['Very Productive','Productive','Neutral','Very Distracting','Distracting']
                       
                     
@@ -72,6 +70,9 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                             {code:'B63ibezIbVIpWoeUm3PM1IAzMEovKyF8qXsGZchY',name:'M. Fiqri Muthohar'},
                        
                 ]
+                
+                $scope.people = $scope.peoples[0].code;
+                
                 $scope.getData = function () {
                     getData()
                 }
@@ -91,7 +92,6 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                     
                     
                     $http(createQuery(startDate , endDate , 'productivity')).then(function(data){
-                        console.log(data)
                         
                         var datas = new Array();
                         var totalTime = 0;
@@ -103,7 +103,6 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
 
                            totalTime +=rows[i][1]
                         }
-                            console.log(datas)
                         
                         var chartConfig = {
                             
@@ -157,11 +156,8 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                    
                     
                     
-                    
-                    
-                    
-                    
                 }
+                getData();
                 
             }
         })
