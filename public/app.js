@@ -85,6 +85,11 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                     return req
                    
                 }
+                $scope.totalTime
+                
+                var getTotalTime = function () {
+                    return $scope.totalTime
+                } 
                 
                 var getData = function () {
                     var startDate = $scope.params.startDate ? moment($scope.params.startDate).format('YYYY/MM/DD') : "";
@@ -99,11 +104,12 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
 
                         for(var i in rows){
                             var name = $scope.labels[rows[i][0] - 1]
-                            datas.push({name:name, y:rows[i][1]});
-
-                           totalTime +=rows[i][1]
+                            var time = rows[i][1] 
+                            datas.push({name:name, y:time});
+                            totalTime += rows[i][1]
+                           
                         }
-                        
+                        $scope.totalTime = totalTime
                         var chartConfig = {
                             
                             options: {
@@ -121,7 +127,8 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                                         dataLabels: {
                                             enabled: true,
                                             formatter:function() {
-                                                var pcnt = (this.y / totalTime) * 100;
+                                                            
+                                                var pcnt = (this.y / getTotalTime()) * 100;
                                                 return Highcharts.numberFormat(pcnt) + '%'
                                             }
                                         }
