@@ -80,7 +80,7 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                 var createQuery = function (startDate , endDate ,restrictKind ){
                      var req = {
                         method: 'get',
-                        url: 'http://10.1.14.189/rt_data?key='+ $scope.people  +'&restrict_begin='+startDate+'&restrict_end='+endDate+'&restrict_kind=' +restrictKind,
+                        url: '/rt_data?key='+ $scope.people  +'&restrict_begin='+startDate+'&restrict_end='+endDate+'&restrict_kind=' +restrictKind,
                     }
                     return req
                    
