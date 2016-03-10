@@ -1,5 +1,5 @@
 // app.js
-var routerApp = angular.module('routerApp', [ 'ui.router' , "highcharts-ng" ,'ui.bootstrap']);
+var routerApp = angular.module('routerApp', [ 'ui.router' , "highcharts-ng" ,'ui.bootstrap','angular-loading-bar', 'ngAnimate']);
 
 routerApp.config(function($stateProvider, $urlRouterProvider) {
     
@@ -43,35 +43,23 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                 $scope.data;
                 $scope.tableData;
                 $scope.chartConfig;
-                $scope.peoples = [
-                    
-                            {code:'B63YS_f6OiMyG6V4fFgF7TUjkbyewTGaw3rBgQ5_',name:'Nanda Nandya Putra'},
-                            {code:'B63CX0sPwRh2PVeNWrBiWZ7_6I982HdmBBMpZb9j',name:'Rayhan Firdaus'},
-                            {code:'B636jGAwOH67x2RWd8CwKiVDurTXSDEKUsJyRjAo',name:'Bayu Hendra Winata'},                          
-                            {code:'B63LZd3NZXPNRPKIWez7uvOMeZ7YgRIyVfSIahXv',name:'Lambang Prabawa'},
-                            {code:'B63e_KwY6zyAQtOZoBuSnYqZ7qECBvxJQiruBY8X',name:'Nurrohman'},
-                            {code:'B63RWdCOjkgUIX0W5rVCxsn3IkJ1lIgtKt_qoXcC',name:'Yoga Hanggara'},
-                            {code:'B63OWwz1pUm0JwAe6jJslQp8lF40aMQiIlNJT5JB',name:'Tama'},
-                            {code:'B63fvvuCdH56ObFDjxlB6kRKHVh6ZRoWCFO8uiMa',name:'Aldy Ginanjar'},
-                            {code:'B63x70TcgZVi9oOLXkMiL0KBI5Oo0Aaz7ZLLhbCs',name:'Ramadani'},
-                            {code:'B63wXKOz1nSfvxmVdYCcpIogUw3eJdRsB1VGqR4A',name:'Ricky Andika'},
-                            {code:'B63UhuTlUwYyFYeK64Qvn7bFrHOn3w59HSxBSwg4',name:'Purwa Darozatun Akbar'},
-                            {code:'B63lGvNohTp80Cv0ZZpqzXHeGNoSyiLfpHWKqAII',name:'Sohib Abdul karim'},
-                            {code:'B630Ldeo8B3cSyozdxnuN6jwNyIRXNinm0TPTEfM',name:'Akmal Fuady'},
-                            {code:'B63fNdbZua35Q1FL3t3sOat1CAqULTaSoJ2Y6uhL',name:'Yandi Fitriyanto'},
-                            {code:'B634PIKFPyR3nezm4Zx_shOLjDmAFDVLOyZNCBbr',name:'Iqbal Saputra'},
-                            {code:'B63iAwgCF6huhWSHPsQuVY92NNwWWig1_pI9mKVn',name:'M. Raihan Iqbal'},
-                            {code:'B63Z_YoW2qHYcCO_dKbz3Y7PbLhlFVkz4Y3AcPQY',name:'Asep Dadang Supriadi'},
-                            {code:'B63lK7LqaZXCZ6X4aBO4r0o0IsMOGCBso7CKyFzO',name:'Muhtarudin S'},
-                            {code:'B63uTKiyDNlXYTGUbRWhBwyKUIZwDQ1HqranwA00',name:'Rudi Dwi Apriyanto'},
-                            {code:'B636zif71MUdRIg0xzBUmAJC9RxeKjDjCo6q2KtW',name:'Roger Bayu'},
-                            {code:'B63JYvtqei1Q22hLx5lVzDKjW1WsRNC0_7nL9gJU',name:'Indah Nur K'},
-                            {code:'B63jvOw7icBJomqhgSJ17y0a_TaiEGdPw0CaeLYK',name:'Novia Al Fitri'},
-                            {code:'B63ibezIbVIpWoeUm3PM1IAzMEovKyF8qXsGZchY',name:'M. Fiqri Muthohar'},
-                       
-                ]
+                $scope.peoples;
+               
+                $http({
+                        method: 'get',
+                        url: '/peoples'
+                     }).then(function(data){
+                        if(data.status == 200){
+                            $scope.peoples = data.data;
+                            $scope.people = $scope.peoples[0].code;
+                            getData()
+                        }else{
+                            alert("Server Error")
+                        }
+                     });
                 
-                $scope.people = $scope.peoples[0].code;
+                
+                
                 
                 $scope.getData = function () {
                     getData()
@@ -164,8 +152,6 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                     
                     
                 }
-                getData();
-                
             }
         })
         

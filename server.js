@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var httpget = require('./httpget.js');
+var peopledata = require('./peoples.json');
 
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -48,6 +49,9 @@ app.get('/rt_data', function(req, res){
    httpget.getJSON(options, function(statusCode, result){
        res.send(result);
    });   
+})
+
+app.get('/peoples', function(req, res){
 })
 //end request
 
