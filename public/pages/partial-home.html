@@ -4,7 +4,7 @@
                 <div class="form-group">
                     <label for="exampleInputName2">Name</label>
                     <select type="text" class="form-control" ng-model="people" ng-change="getData()">
-                        <option ng-repeat="data in peoples" value="{{data.code}}"  >{{data.name}} </option>
+                        <option ng-repeat="data in peoples |  orderBy: 'name'" value="{{data.code}}"  >{{data.name}} </option>
                     </select>
                 </div>
                 

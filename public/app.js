@@ -11,7 +11,9 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
         .state('home', {
             url: '/home',
             templateUrl: '/pages/partial-home.html',
-            controller: function ($scope  , $http) {
+            controller: function ($scope  , $http , $filter) {
+                
+                var orderBy = $filter('orderBy');
                 $scope.format = 'dd-MM-yyyy'
                 $scope.params={
                     startDate:null, 
@@ -51,6 +53,7 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                      }).then(function(data){
                         if(data.status == 200){
                             $scope.peoples = data.data;
+                            $scope.peoples = orderBy($scope.peoples, "name", false);
                             $scope.people = $scope.peoples[0].code;
                             getData()
                         }else{
