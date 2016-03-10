@@ -47,7 +47,7 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                
                 $http({
                         method: 'get',
-                        url: '/peoples'
+                        url: '/people'
                      }).then(function(data){
                         if(data.status == 200){
                             $scope.peoples = data.data;
