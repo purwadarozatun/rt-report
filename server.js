@@ -51,7 +51,7 @@ app.get('/rt_data', function(req, res){
 })
 //end request
 
-var server = app.listen(9000, function () {
+var server = app.listen(80, function () {
 
   var host = server.address().address
   var port = server.address().port
