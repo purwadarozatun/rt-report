@@ -37,8 +37,6 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                     }
                 };
 
-                $scope.people;
-                
                 $scope.labels = ['Very Productive','Productive','Neutral','Very Distracting','Distracting']
                       
                     
@@ -72,6 +70,9 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                             {code:'B63ibezIbVIpWoeUm3PM1IAzMEovKyF8qXsGZchY',name:'M. Fiqri Muthohar'},
                        
                 ]
+                
+                $scope.people = $scope.peoples[0].code;
+                
                 $scope.getData = function () {
                     getData()
                 }
@@ -79,11 +80,16 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                 var createQuery = function (startDate , endDate ,restrictKind ){
                      var req = {
                         method: 'get',
-                        url: 'http://10.1.14.189/rt_data?key='+ $scope.people  +'&restrict_begin='+startDate+'&restrict_end='+endDate+'&restrict_kind=' +restrictKind,
+                        url: '/rt_data?key='+ $scope.people  +'&restrict_begin='+startDate+'&restrict_end='+endDate+'&restrict_kind=' +restrictKind,
                     }
                     return req
                    
                 }
+                $scope.totalTime
+                
+                var getTotalTime = function () {
+                    return $scope.totalTime
+                } 
                 
                 var getData = function () {
                     var startDate = $scope.params.startDate ? moment($scope.params.startDate).format('YYYY/MM/DD') : "";
@@ -91,7 +97,6 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                     
                     
                     $http(createQuery(startDate , endDate , 'productivity')).then(function(data){
-                        console.log(data)
                         
                         var datas = new Array();
                         var totalTime = 0;
@@ -99,12 +104,12 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
 
                         for(var i in rows){
                             var name = $scope.labels[rows[i][0] - 1]
-                            datas.push({name:name, y:rows[i][1]});
-
-                           totalTime +=rows[i][1]
+                            var time = rows[i][1] 
+                            datas.push({name:name, y:time});
+                            totalTime += rows[i][1]
+                           
                         }
-                            console.log(datas)
-                        
+                        $scope.totalTime = totalTime
                         var chartConfig = {
                             
                             options: {
@@ -122,7 +127,8 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                                         dataLabels: {
                                             enabled: true,
                                             formatter:function() {
-                                                var pcnt = (this.y / totalTime) * 100;
+                                                            
+                                                var pcnt = (this.y / getTotalTime()) * 100;
                                                 return Highcharts.numberFormat(pcnt) + '%'
                                             }
                                         }
@@ -157,11 +163,8 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
                    
                     
                     
-                    
-                    
-                    
-                    
                 }
+                getData();
                 
             }
         })

@@ -21,6 +21,8 @@
     "angular-ui-router": "^0.2.18",
     "highcharts-ng": "^0.0.11",
     "angular-ui-bootstrap": "^1.2.2",
-    "angular-bootstrap": "^1.2.2"
+    "angular-bootstrap": "^1.2.2",
+    "highcharts": "^4.2.3",
+    "moment": "^2.12.0"
   }
 }
