@@ -7,8 +7,8 @@ var httpget = require('./httpget.js');
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 
-//app.use(express.static('public'));
-//app.use("/resource" , express.static('bower_components'));
+app.use(express.static('public'));
+app.use("/resource" , express.static('bower_components'));
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -28,7 +28,7 @@ var options = {
 
 //all request here : 
 app.get('/', function (req, res) {
-   res.sendFile( __dirname + "/views/" + "index.htm" );
+   res.sendFile( __dirname + "/public/" + "index.htm" );
 })
 
 app.get('/rt_data', function(req, res){
