@@ -51,12 +51,12 @@ app.get('/rt_data', function(req, res){
    });   
 })
 
-app.get('/peoples', function(req, res){
+app.get('/people', function(req, res){
     res.send(peopledata);
 })
 //end request
 
-var server = app.listen(80, function () {
+var server = app.listen(8080, function () {
 
   var host = server.address().address
   var port = server.address().port
