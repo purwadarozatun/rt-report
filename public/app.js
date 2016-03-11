@@ -159,9 +159,59 @@ routerApp.config(function($stateProvider, $urlRouterProvider) {
         })
         
         // ABOUT PAGE AND MULTIPLE NAMED VIEWS =================================
-        .state('about', {
-            url: '/about',
-            templateUrl: '/pages/partial-about.html'     
+        .state('leaderboard', {
+            url: '/leaderboard',
+            templateUrl: '/pages/partial-leaderboard.html',
+            controller: function ($scope  , $http , $filter) {
+                
+                var orderBy = $filter('orderBy');
+                $scope.format = 'dd-MM-yyyy'
+               
+                $scope.tableData;
+                $scope.months = [
+                    {key : "01" , name : "Januari" },
+                    {key : "02" , name : "February" },
+                    {key : "03" , name : "Maret" },
+                    {key : "04" , name : "April" },
+                    {key : "05" , name : "Mei" },
+                    {key : "06" , name : "Juni" },
+                    {key : "07" , name : "Juli" },
+                    {key : "08" , name : "Agustus" },
+                    {key : "09" , name : "September" },
+                    {key : "10" , name : "Oktober" },
+                    {key : "11" , name : "November" },
+                    {key : "12" , name : "Desember" }
+                ];
+                
+                
+                $scope.years;
+                var years = new Array();
+                for(var i = 2016 ; i <= Number(moment().format('YYYY')) ; i ++){
+                    years.push(i)
+                }
+                $scope.years = years
+                
+                
+                $scope.month = moment().format('MM')
+                $scope.year = moment().format('YYYY')
+                var getData = function () {
+                     $http({
+                        method: 'get',
+                        url: '/rt_leaderboard?selectedMonth=' + $scope.year + "-"+ $scope.month 
+                     }).then(function(data){
+                        if(data.status == 200){
+                            $scope.tableData = data.data
+                            $scope.tableData = orderBy($scope.tableData, "prodAve", true);
+                        }else{
+                            alert("Server Error")
+                        }
+                     });
+                }
+                getData()
+                $scope.getData = function () {
+                    getData()
+                }
+            }
         });
               
 });
