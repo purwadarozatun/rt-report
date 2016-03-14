@@ -1,0 +1,57 @@
+<!-- partial-home.html -->
+<div class="row">
+        <div class="col-lg-6">
+            <h2>The Leaderboard !</h2>
+        </div>
+        <div class="col-lg-6">
+            <div class="row">
+                
+                <div class="col-sm-6">
+                    <label for="exampleInputName2">Bulan</label>
+                    <select type="text" class="form-control" ng-model="month" ng-change="getData()">
+                        <option ng-repeat="data in months" value="{{data.key}}"  >{{data.name}} </option>
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label for="exampleInputName2">Tahun</label>
+                    <select type="text" class="form-control" ng-model="year" ng-change="getData()">
+                        <option ng-repeat="data in years " value="{{data}}"  >{{data}} </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+            <table class="table table-bordered">
+                <tr>
+                    <th >
+                        Player			
+                    </th>
+                    <th >
+                        Total Logged Time
+                    </th>
+                    <th >
+                        Average Daily Logged Time
+                    </th>
+                    <th>
+                        Productivity Score
+                    </th>
+                </tr>
+                <tr ng-repeat="rows in tableData" >
+                    <td>
+                        {{rows.name}}
+                    </td>
+                    <td>
+                        {{rows.totalWaktu.h}}h {{rows.totalWaktu.m}}m 
+                    </td>
+                    <td>
+                        {{rows.rataRataWaktu.h}}h {{rows.rataRataWaktu.m}}m
+                    </td>
+                    <td>
+                        {{rows.prodAve | number:0}}%
+                    </td>
+                </tr>
+            </table>
+        </div>
+</div>
