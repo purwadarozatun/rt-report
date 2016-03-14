@@ -1,4 +1,4 @@
-
+var Promise = require('promise');
 var httpget = require('./httpget.js');
 var request = require('request');
 var async = require('asyncawait/async');

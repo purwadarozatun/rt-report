@@ -7,7 +7,6 @@ var moment = require('moment')
 
 var rescurtimeApi = require('./services/rescuetime_api.js');
 var peopledata = require('./people.json');
-var database = require('./database.json');
 
 var db = new JsonDB("database", true, false);
 
@@ -64,7 +63,7 @@ cron.scheduleJob(rule, function(){
 });
 
 
-var dates = ["2016-02"];
+var dates = ["2016-02" , "2016-03"];
 dates.forEach(function (date) {
     
         rescurtimeApi.calculateLeaderboard(date , peopledata , function (result) {
@@ -75,7 +74,7 @@ dates.forEach(function (date) {
         
 })
 
-var server = app.listen(80, function () {
+var server = app.listen(8090, function () {
 
   var host = server.address().address
   var port = server.address().port
