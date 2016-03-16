@@ -1,29 +1,21 @@
-var Promise = require('promise');
 var httpget = require('./httpget.js');
-var request = require('request');
 var async = require('asyncawait/async');
 var await = require('asyncawait/await');
 
 //init global options
 var options = {
-    host: 'www.rescuetime.com',
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    host: 'http://www.rescuetime.com'
 };
 
 
 var getLeaderboardData = async(function(req)
 {   
-  var quote;
-  return new Promise(function(resolve, reject) {
-    request('http://www.rescuetime.com/anapi/daily_summary_feed?key=' + req.code,   function(error, response, body) {
-      quote = body;
-      resolve(quote);
-    });
-  });
+    options['path'] = '/anapi/daily_summary_feed?' +
+                    'key=' + req.code  
+    return await(httpget.getJson(options))
+
 });
+
 
 var secondToTime = function (secs){
      var hours = Math.floor(secs / (60 * 60));
@@ -49,7 +41,7 @@ var calculateDetail = function name(selectedResult) {
     return {spendTime : spendTime , prodAve : prodPoint / selectedResult.length}
 }
 
-exports.getBasicData = function(request , onResult)
+exports.getBasicData = async(function(request)
 {
     var key = request.query.key;
     var restrict_kind = request.query.restrict_kind;
@@ -63,15 +55,15 @@ exports.getBasicData = function(request , onResult)
                     '&restrict_begin=' + restrict_begin +
                     '&restrict_end=' + restrict_end +
                     '&format=json';
-    
-    httpget.getJSON(options, function(statusCode, result){
-        onResult(statusCode , result)
-    });  
-};
+                    
+    var result= await(httpget.getJson(options))
+    return JSON.parse(result)
+});
 
 exports.calculateLeaderboard = async(function (date , peopledata , onResult) {
    
     var returnedData  = new Array();
+    
     
     await(peopledata.forEach(function(entry, index) {
         

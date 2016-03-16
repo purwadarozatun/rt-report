@@ -5,6 +5,9 @@ var cron = require('node-schedule');
 var JsonDB = require('node-json-db');
 var moment = require('moment')
 
+var async = require('asyncawait/async');
+var await = require('asyncawait/await');
+
 var rescurtimeApi = require('./services/rescuetime_api.js');
 var peopledata = require('./people.json');
 
@@ -29,11 +32,9 @@ app.get('/', function (req, res) {
 })
 
 
-app.get('/rt_data', function(req, res){
-    rescurtimeApi.getBasicData(req , function (code , result) {
-        res.send(result)
-    });
-})
+app.get('/rt_data', async(function(req, res){
+    res.send(await(rescurtimeApi.getBasicData(req )));
+}))
 
 app.get('/rt_leaderboard', function(req, res){
     var date = req.query.selectedMonth ? req.query.selectedMonth : "2016-03";
@@ -63,7 +64,7 @@ cron.scheduleJob(rule, function(){
 });
 
 
-var dates = ["2016-02" , "2016-03"];
+var dates = ["2016-02"];
 dates.forEach(function (date) {
     
         rescurtimeApi.calculateLeaderboard(date , peopledata , function (result) {
