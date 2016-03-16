@@ -1,29 +1,24 @@
-var Promise = require('promise');
 var httpget = require('./httpget.js');
-var request = require('request');
 var async = require('asyncawait/async');
 var await = require('asyncawait/await');
+var moment = require('moment')
+
+var db = require('../services/db.js');
 
 //init global options
 var options = {
-    host: 'www.rescuetime.com',
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    host: 'http://www.rescuetime.com'
 };
 
 
 var getLeaderboardData = async(function(req)
 {   
-  var quote;
-  return new Promise(function(resolve, reject) {
-    request('http://www.rescuetime.com/anapi/daily_summary_feed?key=' + req.code,   function(error, response, body) {
-      quote = body;
-      resolve(quote);
-    });
-  });
+    options['path'] = '/anapi/daily_summary_feed?' +
+                    'key=' + req.code  
+    return await(httpget.getJson(options))
+
 });
+
 
 var secondToTime = function (secs){
      var hours = Math.floor(secs / (60 * 60));
@@ -39,17 +34,31 @@ var secondToTime = function (secs){
 }
 
 
-var calculateDetail = function name(selectedResult) {
+var calculateDetail = function (selectedResult ) {
     var spendTime = 0;
     var prodPoint = 0;
     selectedResult.forEach(function(selected) {
+        
          spendTime += (selected.total_hours * 3600)
          prodPoint += selected.productivity_pulse
     })
     return {spendTime : spendTime , prodAve : prodPoint / selectedResult.length}
 }
+var saveRawToDb = async(function(selectedResult , code) {
+    await(selectedResult.forEach(function(selected) {
+        var currentMonth = moment(selected.date , "YYYY-MM-DD").format("YYYY-MM")
+        var dbPath = "/rawData/" + code  +  '/' + currentMonth + '/' + selected.date
+        console.log(dbPath)
+        await(db().delete(dbPath));
+        await(db().push(dbPath, 
+         {productivity_pulse : selected.productivity_pulse , total_hours : selected.total_hours * 3600}
+         , true));
+        
+    }))
+})
 
-exports.getBasicData = function(request , onResult)
+
+exports.getBasicData = async(function(request)
 {
     var key = request.query.key;
     var restrict_kind = request.query.restrict_kind;
@@ -63,23 +72,29 @@ exports.getBasicData = function(request , onResult)
                     '&restrict_begin=' + restrict_begin +
                     '&restrict_end=' + restrict_end +
                     '&format=json';
-    
-    httpget.getJSON(options, function(statusCode, result){
-        onResult(statusCode , result)
-    });  
-};
+                    
+    var result= await(httpget.getJson(options))
+    return JSON.parse(result)
+});
 
-exports.calculateLeaderboard = async(function (date , peopledata , onResult) {
+exports.calculateLeaderboard = async(function (date , peopledata  , onResult) {
    
     var returnedData  = new Array();
     
-    await(peopledata.forEach(function(entry, index) {
+    
+    await(peopledata.forEach(function(entry, index ) {
         
         var result = await(getLeaderboardData({code : entry.code}))
         result = JSON.parse(result)
-        var selectedResult  = await(result.filter(function(o){return o.date.indexOf(date) > -1}));
-                
-        var detail = await(calculateDetail(selectedResult))
+        
+        await(saveRawToDb(result , entry.code ))
+        console.log("Data generated for code : " + entry.code)
+        
+        
+        
+        var data = db().getData("/rawData/" + entry.code + "/" + date)
+        data = await(Object.keys(data).map(function(k) { return data[k] }));
+        var detail = await(calculateDetail(data))
         if(detail.prodAve){
             await(returnedData.push({
                         code :entry.code,
@@ -87,10 +102,11 @@ exports.calculateLeaderboard = async(function (date , peopledata , onResult) {
                         prodAve :detail.prodAve,
                         totalWaktuDetik :detail.spendTime ? detail.spendTime : 0 ,
                         totalWaktu :  detail.spendTime ? secondToTime(detail.spendTime) :  0,
-                        rataRataWaktu :  detail.spendTime ?  secondToTime(detail.spendTime  / selectedResult.length) : 0
+                        rataRataWaktu :  detail.spendTime ?  secondToTime(detail.spendTime  / data.length) : 0
             }))
         }
     }));
+    
     
     onResult(returnedData)
     
