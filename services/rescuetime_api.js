@@ -39,7 +39,7 @@ var calculateDetail = function (selectedResult ) {
     var prodPoint = 0;
     selectedResult.forEach(function(selected) {
         
-         spendTime += (selected.total_hours * 3600)
+         spendTime += selected.total_hours
          prodPoint += selected.productivity_pulse
     })
     return {spendTime : spendTime , prodAve : prodPoint / selectedResult.length}
