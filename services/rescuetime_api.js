@@ -60,7 +60,7 @@ exports.getBasicData = async(function(request)
     return JSON.parse(result)
 });
 
-exports.calculateLeaderboard = async(function (date , peopledata , onResult) {
+exports.calculateLeaderboard = async(function (date , peopledata ) {
    
     var returnedData  = new Array();
     
@@ -84,7 +84,7 @@ exports.calculateLeaderboard = async(function (date , peopledata , onResult) {
         }
     }));
     
-    onResult(returnedData)
+    return returnedData
     
     
 })

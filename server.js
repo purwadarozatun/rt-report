@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var cron = require('node-schedule');
 var JsonDB = require('node-json-db');
 var moment = require('moment')
 
@@ -10,6 +9,9 @@ var await = require('asyncawait/await');
 
 var rescurtimeApi = require('./services/rescuetime_api.js');
 var peopledata = require('./people.json');
+
+
+var FirstLeaderboardController = require("./controllers/first_leaderboard_controller.js")
 
 var db = new JsonDB("database", true, false);
 
@@ -49,31 +51,25 @@ app.get('/people', function(req, res){
 
 //end request
 
-var rule = new cron.RecurrenceRule();
-rule.dayOfWeek = [0, new cron.Range(0, 4)];
-rule.hour = 1;
-rule.minute = 0;
 
-cron.scheduleJob(rule, function(){
-    console.log('Get data!');
-    var date = moment(new Date()).format("YYYY-DD");
-    rescurtimeApi.calculateLeaderboard(date , peopledata , function (result) {
-        db.push("/leaderboard/" + date, result, true);
-        console.log("Finished get data for " + date + " !")
-    });
-});
+//cron jobs 
+// var rule = new cron.RecurrenceRule();
+// rule.dayOfWeek = [0, new cron.Range(0, 4)];
+// rule.hour = 1;
+// rule.minute = 0;
 
+// cron.scheduleJob(rule, function(){
+//     console.log('Get data!');
+//     var date = moment(new Date()).format("YYYY-DD");
+//     rescurtimeApi.calculateLeaderboard(date , peopledata , function (result) {
+//         db.delete(("/leaderboard/" + date));
+//         db.push("/leaderboard/" + date, result, true);
+//         console.log("Finished get data for " + date + " !")
+//     });
+// });
+//end Of Cron jobs
 
-var dates = ["2016-02"];
-dates.forEach(function (date) {
-    
-        rescurtimeApi.calculateLeaderboard(date , peopledata , function (result) {
-            db.delete(("/leaderboard/" + date));
-            db.push("/leaderboard/" + date, result, true);
-            console.log("Finished get data for " + date + " !")
-        });
-        
-})
+FirstLeaderboardController()
 
 var server = app.listen(8090, function () {
 
