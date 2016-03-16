@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var JsonDB = require('node-json-db');
 var moment = require('moment')
 
 var async = require('asyncawait/async');
@@ -9,11 +8,11 @@ var await = require('asyncawait/await');
 
 var rescurtimeApi = require('./services/rescuetime_api.js');
 var peopledata = require('./people.json');
+var db = require('./services/db.js');
 
+var firstLeaderboardController = require("./controllers/first_leaderboard_controller.js")
+var cronController = require("./controllers/cron_controller.js")
 
-var FirstLeaderboardController = require("./controllers/first_leaderboard_controller.js")
-
-var db = new JsonDB("database", true, false);
 
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -40,7 +39,7 @@ app.get('/rt_data', async(function(req, res){
 
 app.get('/rt_leaderboard', function(req, res){
     var date = req.query.selectedMonth ? req.query.selectedMonth : "2016-03";
-    var data = db.getData("/leaderboard/" + date)
+    var data = db().getData("/leaderboard/" + date)
     res.send(data)
 })
 
@@ -69,7 +68,8 @@ app.get('/people', function(req, res){
 // });
 //end Of Cron jobs
 
-FirstLeaderboardController()
+firstLeaderboardController( false , ["2016-03"])
+cronController()
 
 var server = app.listen(8090, function () {
 

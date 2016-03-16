@@ -8,13 +8,15 @@ var db = require('../services/db.js');
 var people = require('../model/people.js');
 
 
-module.exports = async (function () {
-    var dates = ["2016-02"];
-    await(dates.forEach(function (date) {
-            var result = await(rescurtimeApi.calculateLeaderboard(date , people()))
-            await(db().delete(("/leaderboard/" + date)));
-            await(db().push("/leaderboard/" + date, result, true));
-            await(console.log("Finished get data for " + date + " !"))
-            
-    }))
+module.exports = async (function (active , dates) {
+    if(active){
+        dates.forEach(function (date) {
+                rescurtimeApi.calculateLeaderboard(date , people() , function (result) {
+                    await(db().delete(("/leaderboard/" + date)));
+                    await(db().push("/leaderboard/" + date, result, true));
+                    console.log("Finished get data for " + date + " !")
+                })
+                
+        })
+    }
 });
