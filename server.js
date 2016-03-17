@@ -2,14 +2,13 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var moment = require('moment')
-
 var async = require('asyncawait/async');
 var await = require('asyncawait/await');
 
 var rescurtimeApi = require('./services/rescuetime_api.js');
 var peopledata = require('./people.json');
 var db = require('./services/db.js');
-
+var config = require('./config.json')
 var firstLeaderboardController = require("./controllers/first_leaderboard_controller.js")
 var cronController = require("./controllers/cron_controller.js")
 
@@ -51,27 +50,11 @@ app.get('/people', function(req, res){
 //end request
 
 
-//cron jobs 
-// var rule = new cron.RecurrenceRule();
-// rule.dayOfWeek = [0, new cron.Range(0, 4)];
-// rule.hour = 1;
-// rule.minute = 0;
-
-// cron.scheduleJob(rule, function(){
-//     console.log('Get data!');
-//     var date = moment(new Date()).format("YYYY-DD");
-//     rescurtimeApi.calculateLeaderboard(date , peopledata , function (result) {
-//         db.delete(("/leaderboard/" + date));
-//         db.push("/leaderboard/" + date, result, true);
-//         console.log("Finished get data for " + date + " !")
-//     });
-// });
-//end Of Cron jobs
-
 firstLeaderboardController( false , ["2016-03"])
 cronController()
 
-var server = app.listen(8090, function () {
+
+var server = app.listen(config.port, function () {
 
   var host = server.address().address
   var port = server.address().port
