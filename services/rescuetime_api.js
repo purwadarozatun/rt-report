@@ -44,16 +44,22 @@ var calculateDetail = function (selectedResult ) {
     })
     return {spendTime : spendTime , prodAve : prodPoint / selectedResult.length}
 }
-var saveRawToDb = async(function(selectedResult , code) {
-    await(selectedResult.forEach(function(selected) {
-        var currentMonth = moment(selected.date , "YYYY-MM-DD").format("YYYY-MM")
-        var dbPath = "/rawData/" + code  +  '/' + currentMonth + '/' + selected.date
-        console.log(dbPath)
-        await(db().delete(dbPath));
-        await(db().push(dbPath, 
-         {productivity_pulse : selected.productivity_pulse , total_hours : selected.total_hours * 3600}
-         , true));
-        
+var getRawData = async(function(peoples) {
+    
+    await(peoples.forEach(function(entry, index ) {
+        var selectedResult = await(getLeaderboardData({code : entry.code}))
+        selectedResult = JSON.parse(selectedResult)
+        await(selectedResult.forEach(function(selected) {
+            var currentMonth = moment(selected.date , "YYYY-MM-DD").format("YYYY-MM")
+            var dbPath = "/rawData/" + entry.code  +  '/' + currentMonth + '/' + selected.date
+            console.log(dbPath)
+            await(db().delete(dbPath));
+            await(db().push(dbPath, 
+            {productivity_pulse : selected.productivity_pulse , total_hours : selected.total_hours * 3600}
+            , true));
+            
+        }))
+        console.log("Data generated for code : " + entry.code )
     }))
 })
 
@@ -77,21 +83,16 @@ exports.getBasicData = async(function(request)
     return JSON.parse(result)
 });
 
+exports.getRawData = async(function (peoples) {
+    await (getRawData(peoples))
+})
+
 exports.calculateLeaderboard = async(function (date , peopledata  , onResult) {
-   
+    
     var returnedData  = new Array();
     
-    
     await(peopledata.forEach(function(entry, index ) {
-        
-        var result = await(getLeaderboardData({code : entry.code}))
-        result = JSON.parse(result)
-        
-        await(saveRawToDb(result , entry.code ))
-        console.log("Data generated for code : " + entry.code)
-        
-        
-        
+    
         var data = db().getData("/rawData/" + entry.code + "/" + date)
         data = await(Object.keys(data).map(function(k) { return data[k] }));
         var detail = await(calculateDetail(data))
@@ -101,15 +102,18 @@ exports.calculateLeaderboard = async(function (date , peopledata  , onResult) {
                         name : entry.name ,
                         prodAve :detail.prodAve,
                         totalWaktuDetik :detail.spendTime ? detail.spendTime : 0 ,
+                        rataRataWaktuDetik :detail.spendTime ? detail.spendTime / data.length : 0 ,
                         totalWaktu :  detail.spendTime ? secondToTime(detail.spendTime) :  0,
                         rataRataWaktu :  detail.spendTime ?  secondToTime(detail.spendTime  / data.length) : 0
             }))
         }
+        
+        console.log("Leaderbooard generated for code : " + entry.code )
     }));
-    
     
     onResult(returnedData)
     
     
 })
+
 

@@ -6,7 +6,6 @@ var Promise = require('promise');
 /**
  * getJSON:  REST get request returning JSON object(s)
  * @param options: http options object
- * @param callback: callback to pass the results JSON object(s) back
  */
 exports.getJson = async(function(options)
 {   
