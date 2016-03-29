@@ -6,7 +6,7 @@ var await = require('asyncawait/await');
 var leaderboardService = require("../services/leaderboard_service.js");
 var rawdataService = require("../services/rawdata_service.js");
 
-var getRawDataCron = function () {
+    var getRawDataCron = function () {
         var rule = new cron.RecurrenceRule();
         rule.dayOfWeek = [0, new cron.Range(0, 4)];
         rule.hour = 3;

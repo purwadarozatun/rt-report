@@ -1,4 +1,17 @@
 {
-    "port" : "8090",
-    "database" :  "databaseName"
+    "local": {
+        "mode": "local",
+        "database" : "databaseLocal",
+        "port": 3000
+    },
+    "staging": {
+        "mode": "staging",
+        "database" : "databaseStaging",
+        "port": 3000
+    },
+    "production": {
+        "mode": "production",
+        "database" : "databaseProduction",
+        "port": 3000
+    }
 }
